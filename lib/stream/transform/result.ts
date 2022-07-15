@@ -1,9 +1,9 @@
 import { Stream } from "stream"
 import { StreamData } from "../../stream-data"
 
-export type ResultFn = (meta: any) => void
+export type ResultFn<T> = (meta: T) => void
 
-export const result = (handler: ResultFn) => {
+export const result = <T = any>(handler: ResultFn<T>) => {
     let streamData: StreamData
     const stream = new Stream.Transform({
         objectMode: true,
@@ -14,9 +14,9 @@ export const result = (handler: ResultFn) => {
     }).on("close", () => {
         if (streamData) {
             const meta = Object.fromEntries(streamData == null ? [] : [...streamData.meta.entries()])
-            handler(meta)
+            handler(meta as T)
         } else {
-            handler({})
+            handler({} as T)
         }
     })
     return stream
