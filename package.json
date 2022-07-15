@@ -4,9 +4,11 @@
   "description": "Process csv files as streams of rows",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "npm run clean && tsc",
+    "clean": "rm -rf dist",
     "prepare": "npm run build",
-    "test": "tap --ts"
+    "test": "npm run build && tap --ts --no-check-coverage",
+    "test-ts": "npm run clean && tap --ts --no-check-coverage"
   },
   "author": "James Abney",
   "license": "ISC",
