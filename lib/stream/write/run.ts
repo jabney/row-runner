@@ -4,6 +4,6 @@ import { Writer } from "./writer"
 /**
  * Null writer
  */
-export const run = (done: DoneFn) => {
+export const run = (done?: DoneFn) => {
     return new Writer(null, null, done)
 }

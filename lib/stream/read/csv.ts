@@ -9,7 +9,7 @@ import { DoneFn } from "../../types"
 /**
  * Read a csv file and convert rows to a stream of values.
  */
-export const csv = (path: string, options: Partial<CsvOptions> = {}, done: DoneFn): Readable => {
+export const csv = (path: string, options: Partial<CsvOptions> = {}, done?: DoneFn): Readable => {
     const opts = new CsvOptions(options)
     const rl = createInterface({ input: createReadStream(path) })
     const start = process.hrtime()

@@ -4,7 +4,7 @@ import { Writer } from "./writer"
 /**
  * Write rows of data to stdout.
  */
-export const print = (done: DoneFn) => {
+export const print = (done?: DoneFn) => {
     return new Writer(
         null,
         (row) => {
