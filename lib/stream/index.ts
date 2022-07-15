@@ -4,7 +4,7 @@ export { each } from "./write/each"
 export { print } from "./write/print"
 export { run } from "./write/run"
 export { write } from "./write/write"
-export { Writer, WriteTransFn } from "./write/writer"
+export { Writer, WriteProjectFn } from "./write/writer"
 
 export { aggregate, AggregateFn } from "./transform/aggregate"
 export { append, AppendFn } from "./transform/append"

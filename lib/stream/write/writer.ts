@@ -5,10 +5,10 @@ import { StreamData } from "../../stream-data"
 import { DoneFn } from "../../types"
 
 type Closable = Writable & { close?: () => void }
-export type WriteTransFn = (row: Row) => any | Promise<any>
+export type WriteProjectFn = (row: Row) => any | Promise<any>
 
 export class Writer extends Writable {
-    constructor(stream?: Closable | null, transform?: WriteTransFn | null, done?: DoneFn) {
+    constructor(stream?: Closable | null, transform?: WriteProjectFn | null, done?: DoneFn) {
         const start = process.hrtime()
         let rows = 0
 

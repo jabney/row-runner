@@ -1,9 +1,9 @@
 import { DoneFn } from "../../types"
-import { Writer, WriteTransFn } from "./writer"
+import { Writer, WriteProjectFn } from "./writer"
 
 /**
  * Write rows of data to stdout.
  */
-export const each = (cb: WriteTransFn, done: DoneFn) => {
+export const each = (cb: WriteProjectFn, done: DoneFn) => {
     return new Writer(null, cb, done)
 }
