@@ -25,9 +25,8 @@ export class Header {
                     return this.getIndex(v)
                 } else if (typeof v === "number") {
                     return v
-                } else {
-                    return -1
                 }
+                return -1
             })
             .flat()
     }
