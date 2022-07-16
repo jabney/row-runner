@@ -82,6 +82,8 @@ const convertType = (types: TypesMap, key: string, value: string): any => {
             return parseFloat(value)
         case "boolean":
             return value.trim().toLowerCase() === "true"
+        case "date":
+            return new Date(value)
         case "nullable":
             return value.length === 0 ? null : value
         case "json":

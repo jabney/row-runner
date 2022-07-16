@@ -25,6 +25,7 @@ export type DataType =
     | "parse-int"
     | "parse-float"
     | "boolean"
+    | "date"
     | "nullable"
     | "json"
     | ((value: string) => any)
