@@ -64,7 +64,7 @@ export class Row {
 }
 
 const find = (row: readonly string[], spec: SearchSpec, header: Header): SearchResult[] => {
-    const withColumnIndex = row.map((value, index) => ({ column: header.getName(index), value }))
+    const withColumnIndex = row.map((value, i) => ({ column: header.columns[i], value }))
     const cols = spec.cols === "*" ? new Set() : new Set(header.selectIndices(spec.cols))
     const values = spec.cols === "*" ? withColumnIndex : withColumnIndex.filter((_, i) => cols.has(i))
     const expr = typeof spec.expr === "string" ? new RegExp(spec.expr, "i") : spec.expr

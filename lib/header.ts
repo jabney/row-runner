@@ -4,7 +4,6 @@ export class Header {
     readonly columns: readonly string[]
 
     private _indexLookup: Record<string, number> | null = null
-    private _nameLookup: Record<number, string> | null = null
 
     constructor(columns: readonly string[]) {
         this.columns = columns
@@ -15,13 +14,6 @@ export class Header {
             this._indexLookup = Object.fromEntries(this.columns.map((v, i) => [v, i]))
         }
         return this._indexLookup
-    }
-
-    get nameLookup(): Record<number, string> {
-        if (this._nameLookup == null) {
-            this._nameLookup = Object.fromEntries(this.columns.map((v, i) => [i, v]))
-        }
-        return this._nameLookup
     }
 
     selectIndices = (columns: ColumnSpec | ColumnSpec[]): number[] => {
@@ -43,6 +35,4 @@ export class Header {
     }
 
     getIndex = (column: string): number => this.indexLookup[column]
-
-    getName = (index: number): string => this.nameLookup[index]
 }
