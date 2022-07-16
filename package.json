@@ -5,10 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run clean && tsc",
+    "cover": "tap --ts --coverage-report=html --no-browser",
     "clean": "rm -rf dist",
-    "prepare": "npm run build",
+    "prepare": "npm run test-ts && npm run build",
     "test": "npm run build && tap --ts --no-coverage",
-    "test-ts": "npm run clean && tap --ts --no-coverage"
+    "test-ts": "npm run clean && tap --ts --no-check-coverage"
   },
   "author": "James Abney",
   "license": "ISC",
