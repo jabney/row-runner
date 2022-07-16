@@ -5,7 +5,6 @@ import { rowExtractor } from "../../row-extractor"
 import { Header } from "../../header"
 import { Row } from "../../row"
 import { DoneFn, MetaMap, TypesMap } from "../../types"
-import { StreamData } from "../../stream-data"
 
 /**
  * Read a csv file and convert rows to a stream of values.
@@ -33,14 +32,12 @@ export const csv = (path: string, options: Partial<CsvOptions> = {}, done?: Done
             } else {
                 header = new Header(values.map((_, i) => i.toString()))
                 row = new Row({ index: 0, values, header, types, meta, storage })
-                const data: StreamData = { index: 0, row, meta, types }
-                rs.push(data)
+                rs.push(row)
             }
         } else {
             const i = opts.hasHeader ? index - 1 : index
             row = new Row({ index: i, values, header, types, meta, storage })
-            const data: StreamData = { index: i, row, meta, types }
-            rs.push(data)
+            rs.push(row)
         }
         index += 1
     })

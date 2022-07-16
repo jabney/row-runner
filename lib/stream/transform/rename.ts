@@ -1,7 +1,6 @@
 import { Stream } from "stream"
 import { Header } from "../../header"
 import { Row } from "../../row"
-import { StreamData } from "../../stream-data"
 
 type ListType = [string | number, string]
 
@@ -11,12 +10,11 @@ export const rename = (list: ListType[]) => {
 
     return new Stream.Transform({
         objectMode: true,
-        transform: (data: StreamData, _, next) => {
-            if (data.index === 0) {
-                header = new Header(data.row.header.columns.map((v) => map.get(v) || v))
+        transform: (row: Row, _, next) => {
+            if (row.index === 0) {
+                header = new Header(row.header.columns.map((v) => map.get(v) || v))
             }
-            const row = new Row({ ...data.row, header })
-            next(null, { ...data, row })
+            next(null, new Row({ ...row, header }))
         },
     })
 }

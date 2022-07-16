@@ -1,15 +1,15 @@
-import { StreamData as StreamDataClass } from "./lib/stream-data"
-
 export * from "./lib/types"
 export { Header } from "./lib/header"
 export { Row } from "./lib/row"
 
 export { csv, CsvOptions } from "./lib/stream/read/csv"
+
 export { each } from "./lib/stream/write/each"
 export { print } from "./lib/stream/write/print"
 export { run } from "./lib/stream/write/run"
 export { write } from "./lib/stream/write/write"
 export { Writer, WriteProjectFn } from "./lib/stream/write/writer"
+
 export { aggregate, AggregateFn } from "./lib/stream/transform/aggregate"
 export { append, AppendFn } from "./lib/stream/transform/append"
 export { audit, AuditFn } from "./lib/stream/transform/audit"
@@ -26,5 +26,3 @@ export { search, SearchFn } from "./lib/stream/transform/search"
 export { sample, SampleFn } from "./lib/stream/transform/sample"
 export { select } from "./lib/stream/transform/select"
 export { store, StoreFn } from "./lib/stream/transform/store"
-
-export interface StreamData extends StreamDataClass {}

@@ -1,19 +1,19 @@
 import { Stream } from "stream"
-import { StreamData } from "../../stream-data"
+import { Row } from "../../row"
 
 export type ResultFn<T> = (meta: T) => void
 
 export const result = <T = any>(handler: ResultFn<T>) => {
-    let streamData: StreamData
+    let cachedRow: Row
     const stream = new Stream.Transform({
         objectMode: true,
-        transform: (data: StreamData, _, next) => {
-            streamData = data
-            next(null, data)
+        transform: (row: Row, _, next) => {
+            cachedRow = row
+            next(null, row)
         },
     }).on("close", () => {
-        if (streamData) {
-            const meta = Object.fromEntries(streamData == null ? [] : [...streamData.meta.entries()])
+        if (cachedRow) {
+            const meta = Object.fromEntries(cachedRow == null ? [] : [...cachedRow.meta.entries()])
             handler(meta as T)
         } else {
             handler({} as T)

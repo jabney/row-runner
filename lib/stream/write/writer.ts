@@ -1,7 +1,6 @@
 import { EOL } from "os"
 import { Writable } from "stream"
 import { Row } from "../../row"
-import { StreamData } from "../../stream-data"
 import { DoneFn } from "../../types"
 
 type Closable = Writable & { close?: () => void }
@@ -14,17 +13,16 @@ export class Writer extends Writable {
 
         super({
             objectMode: true,
-
-            write: async (data: StreamData, _, next) => {
-                if (data.index === 0) {
-                    this.emit("header", data.row.header)
-                    stream?.write(data.row.header.columns + EOL)
+            write: async (row: Row, _, next) => {
+                if (row.index === 0) {
+                    this.emit("header", row.header)
+                    stream?.write(row.header.columns + EOL)
                 }
-                this.emit("row", data.row)
-                const value = (await transform?.(data.row)) ?? data.row
+                this.emit("row", row)
+                const value = (await transform?.(row)) ?? row
                 stream?.write(value)
                 next()
-                rows = data.index + 1
+                rows = row.index + 1
             },
         })
         this.on("finish", () => {

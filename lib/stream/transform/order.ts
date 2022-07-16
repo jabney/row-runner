@@ -2,7 +2,6 @@ import { Stream } from "stream"
 import { columnSorter } from "../../column-sorter"
 import { Header } from "../../header"
 import { Row } from "../../row"
-import { StreamData } from "../../stream-data"
 import { ColumnSpec } from "../../types"
 
 export const order = (columns: ColumnSpec[]) => {
@@ -11,13 +10,12 @@ export const order = (columns: ColumnSpec[]) => {
 
     return new Stream.Transform({
         objectMode: true,
-        transform: (data: StreamData, _, next) => {
-            if (data.index === 0) {
-                sort = columnSorter(columns, data.row.header.selectIndices)
-                header = new Header(sort(data.row.header.columns))
+        transform: (row: Row, _, next) => {
+            if (row.index === 0) {
+                sort = columnSorter(columns, row.header.selectIndices)
+                header = new Header(sort(row.header.columns))
             }
-            const row = new Row({ ...data.row, values: sort(data.row.values), header })
-            next(null, { ...data, row })
+            next(null, new Row({ ...row, values: sort(row.values), header }))
         },
     })
 }
