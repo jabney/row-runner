@@ -5,7 +5,9 @@ import {
     aggregate,
     append,
     audit,
+    constant,
     csv,
+    describe,
     each,
     exclude,
     filter,
@@ -15,10 +17,13 @@ import {
     result,
     run,
     sample,
+    search,
     select,
     store,
 } from ".."
+
 const realEstatePath = "./test/data/real-estate.csv"
+const crimeReportsPath = "./test/data/crime-reports.csv"
 
 const realEstateLineCount = new Promise<number>((resolve) => {
     let count = 0
@@ -55,7 +60,7 @@ tap.test("Filters rows", async (t) => {
         csv(realEstatePath, { hasHeader: true })
             .pipe(filter((row) => row.index % 2 === 0))
             .pipe(aggregate("count", 0, (row, count) => count + 1))
-            .pipe(result<{ count: number }>(({ count }) => resolve(count)))
+            .pipe(result(({ count }) => resolve(count)))
             .pipe(run())
     })
 
@@ -67,7 +72,7 @@ tap.test("Samples rows", (t) => {
         .pipe(sample(0, 0.1))
         .pipe(aggregate("count", 0, (row, count) => count + 1))
         .pipe(
-            result<{ count: number }>(({ count }) => {
+            result(({ count }) => {
                 t.equal(count, 101)
                 t.end()
             })
@@ -157,8 +162,61 @@ tap.test("Maps columns", (t) => {
 
 tap.test("Appends columns", (t) => {
     csv(realEstatePath, { hasHeader: true })
-        .pipe(filter((row) => row.index < 50 && ["95621", "95673"].includes(row.get("zip"))))
+        .pipe(constant("zips", () => new Set(["95621", "95673"])))
+        .pipe(filter((row) => row.index < 50 && row.meta.get("zips").has(row.get("zip"))))
         .pipe(append("local", (row) => row.get("zip") === "95673"))
         .pipe(audit((row) => t.equal(row.get("zip") === "95673", row.get("local") === "true")))
+        .pipe(run(() => t.end()))
+})
+
+tap.test("Searches rows", (t) => {
+    csv(crimeReportsPath, { hasHeader: true })
+        .pipe(filter((row) => row.index < 100))
+        .pipe(search([{ cols: "crime_desc", expr: /burglary|theft/i }]))
+        .pipe(audit((row) => t.match(row.get("crime_desc"), /burglary|theft/i)))
+        .pipe(
+            run(({ rows }) => {
+                t.equal(rows, 28)
+                t.end()
+            })
+        )
+})
+
+tap.test("Describes types", (t) => {
+    csv(realEstatePath, { hasHeader: true })
+        .pipe(
+            describe([
+                { cols: ["latitude", "longitude"], type: "number" },
+                { cols: "price", type: (value) => `$${Number(value).toLocaleString()}` },
+            ])
+        )
+        .pipe(filter((row) => row.index < 3))
+        .pipe(
+            audit((row) => {
+                t.type(row.getTyped("latitude"), "number")
+                t.type(row.getTyped("longitude"), "number")
+                t.type(row.getTyped("price"), "string")
+                t.match(row.getTyped("price"), /^\$\d+,\d+$/)
+            })
+        )
+        .pipe(run(() => t.end()))
+})
+
+tap.test("Converts row to object", (t) => {
+    csv(realEstatePath, { hasHeader: true })
+        .pipe(
+            describe([
+                { cols: ["beds", "baths", "sq_ft", "price", "latitude", "longitude"], type: "number" },
+                { cols: "sale_date", type: "date" },
+            ])
+        )
+        .pipe(filter((row) => row.index < 3))
+        .pipe(
+            audit((row) => {
+                const obj1 = row.asObject()
+                const obj2 = row.asObject(/beds|baths/)
+                // console.log(obj1, obj2)
+            })
+        )
         .pipe(run(() => t.end()))
 })
