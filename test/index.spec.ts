@@ -24,6 +24,7 @@ import {
 
 const realEstatePath = "./test/data/real-estate.csv"
 const crimeReportsPath = "./test/data/crime-reports.csv"
+const noHeaderPath = "./test/data/no-header.csv"
 
 const realEstateLineCount = new Promise<number>((resolve) => {
     let count = 0
@@ -227,6 +228,49 @@ tap.test("Converts row to object", (t) => {
                 t.type(partial.beds, "number")
                 t.type(partial.baths, "number")
                 t.ok(partial.sale_date instanceof Date)
+            })
+        )
+        .pipe(run(() => t.end()))
+})
+
+tap.test("Processes no-header CSV", (t) => {
+    const cols = new Map([
+        ["beds", 4],
+        ["baths", 5],
+        ["sq_ft", 6],
+        ["price", 9],
+    ])
+
+    csv(noHeaderPath, { hasHeader: false })
+        .pipe(select([...cols.values()]))
+        .pipe(describe({ cols: [0, 1], type: "number" }))
+        .pipe(
+            describe([
+                { cols: [2], type: "json" },
+                { cols: [3], type: "json" },
+            ])
+        )
+        .pipe(filter((row) => row.index === 0))
+        .pipe(
+            audit((row) => {
+                t.type(row.get(0), "string")
+                t.type(row.get(1), "string")
+                t.type(row.get(2), "string")
+                t.type(row.get(3), "string")
+                t.type(row.getTyped(0), "number")
+                t.type(row.getTyped(1), "number")
+                t.type(row.getTyped(2), "number")
+                t.type(row.getTyped(3), "number")
+            })
+        )
+        .pipe(
+            audit((row) => {
+                const obj = row.asObject()
+                t.equal(Object.keys(obj).length, 4)
+                t.ok(obj["4"] != null)
+                t.ok(obj["5"] != null)
+                t.ok(obj["5"] != null)
+                t.ok(obj["9"] != null)
             })
         )
         .pipe(run(() => t.end()))
