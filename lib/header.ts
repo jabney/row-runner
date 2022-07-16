@@ -3,18 +3,24 @@ import { ColumnSpec } from "./types"
 export class Header {
     readonly columns: readonly string[]
 
-    private _indices: Map<string, number>
+    private _indices: Map<string, number> | null = null
 
     constructor(columns: readonly string[]) {
         this.columns = columns
-        this._indices = new Map(this.columns.map((v, i) => [v, i]))
+    }
+
+    private get indices() {
+        if (this._indices == null) {
+            this._indices = new Map(this.columns.map((v, i) => [v, i]))
+        }
+        return this._indices
     }
 
     selectIndices = (columns: ColumnSpec | ColumnSpec[]): number[] => {
         return (Array.isArray(columns) ? columns : [columns])
             .map((v) => {
                 if (v instanceof RegExp) {
-                    return [...this._indices].filter(([key]) => v.test(key)).map(([, value]) => value)
+                    return [...this.indices].filter(([key]) => v.test(key)).map(([, value]) => value)
                 } else if (typeof v === "string") {
                     return this.getIndex(v)
                 } else if (typeof v === "number") {
@@ -26,5 +32,5 @@ export class Header {
             .flat()
     }
 
-    getIndex = (column: string): number => this._indices.get(column) ?? -1
+    getIndex = (column: string): number => this.indices.get(column) ?? -1
 }
