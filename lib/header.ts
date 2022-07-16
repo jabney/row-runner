@@ -21,12 +21,11 @@ export class Header {
             .map((v) => {
                 if (v instanceof RegExp) {
                     return [...this.indices].filter(([key]) => v.test(key)).map(([, value]) => value)
-                } else if (typeof v === "string") {
-                    return this.getIndex(v)
                 } else if (typeof v === "number") {
                     return v
+                } else {
+                    return this.getIndex(v.toString?.() ?? -1)
                 }
-                return -1
             })
             .flat()
     }
