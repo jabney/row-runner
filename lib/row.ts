@@ -47,15 +47,15 @@ export class Row {
     }
 
     asObject(columns?: ColumnSpec | ColumnSpec[]): Record<string, any> {
-        let cols = (() => {
+        let [cols, vals] = (() => {
             if (columns != null) {
                 const set = new Set(this.header.selectIndices(columns))
-                return this.header.columns.filter((_, i) => set.has(i))
+                return [this.header.columns.filter((_, i) => set.has(i)), this.values.filter((_, i) => set.has(i))]
             } else {
-                return this.header.columns
+                return [this.header.columns, this.values]
             }
         })()
-        return Object.fromEntries(cols.map(convertTypes(this.types, this.values)))
+        return Object.fromEntries(cols.map(convertTypes(this.types, vals)))
     }
 
     toJSON() {
