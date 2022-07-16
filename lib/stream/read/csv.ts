@@ -61,10 +61,10 @@ export class CsvOptions {
         /**
          * @type {boolean}
          */
-        this.hasHeader = hasHeader != null ? hasHeader : false
+        this.hasHeader = hasHeader ?? false
         /**
          * @type {string}
          */
-        this.separator = separator != null ? separator : ","
+        this.separator = separator ?? ","
     }
 }
