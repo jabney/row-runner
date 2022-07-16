@@ -11,9 +11,9 @@ export const search = (specs: SearchSpec | SearchSpec[], cb?: SearchFn) => {
         objectMode: true,
         transform: (data: StreamData, _, next) => {
             const results = data.row.search(specs)
-            const row = new Row({ ...data.row, index })
-            cb?.(row, results)
             if (results.length > 0) {
+                const row = new Row({ ...data.row, index })
+                cb?.(row, results)
                 next(null, { ...data, index, row })
                 index += 1
             } else {
