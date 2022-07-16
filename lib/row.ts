@@ -25,9 +25,8 @@ export class Row {
     }
 
     getTyped = <T = unknown>(column: string | number): T => {
-        return convertType(
-            this.types,
-            column.toString(),
+        return this.convertType(
+            column,
             typeof column === "number" ? this.values[column] : this.values[this.header.getIndex(column)]
         )
     }
@@ -55,11 +54,41 @@ export class Row {
                 return [this.header.columns, this.values]
             }
         })()
-        return Object.fromEntries(cols.map(convertTypes(this.types, vals)))
+
+        return Object.fromEntries(cols.map((col, i) => [col, this.convertType(col, vals[i])]))
     }
 
     toJSON() {
         return JSON.stringify(this.asObject())
+    }
+
+    private convertType = (col: string | number, value: string): any => {
+        const type = this.types.get(typeof col === "string" ? col : this.header.columns[col])
+        switch (type) {
+            case "number":
+                return Number(value)
+            case "parse-int":
+                return parseInt(value)
+            case "parse-float":
+                return parseFloat(value)
+            case "boolean":
+                return value.trim().toLowerCase() === "true"
+            case "date":
+                return new Date(value)
+            case "nullable":
+                return value.length === 0 ? null : value
+            case "json":
+                try {
+                    return JSON.parse(value)
+                } catch {
+                    return null
+                }
+            default:
+                if (typeof type === "function") {
+                    return type(value)
+                }
+                return value
+        }
     }
 }
 
@@ -69,39 +98,4 @@ const find = (row: readonly string[], spec: SearchSpec, header: Header): SearchR
     const values = spec.cols === "*" ? withColumnIndex : withColumnIndex.filter((_, i) => cols.has(i))
     const expr = typeof spec.expr === "string" ? new RegExp(spec.expr, "i") : spec.expr
     return values.filter(({ value }) => expr.test(value))
-}
-
-const convertType = (types: TypesMap, key: string, value: string): any => {
-    const type = types.get(key)
-    switch (type) {
-        case "number":
-            return Number(value)
-        case "parse-int":
-            return parseInt(value)
-        case "parse-float":
-            return parseFloat(value)
-        case "boolean":
-            return value.trim().toLowerCase() === "true"
-        case "date":
-            return new Date(value)
-        case "nullable":
-            return value.length === 0 ? null : value
-        case "json":
-            try {
-                return JSON.parse(value)
-            } catch {
-                return null
-            }
-        default:
-            if (typeof type === "function") {
-                return type(value)
-            }
-            return value
-    }
-}
-
-const convertTypes = (types: TypesMap, values: readonly string[]) => {
-    return (key: string, i: number) => {
-        return [key, convertType(types, key, values[i])]
-    }
 }
