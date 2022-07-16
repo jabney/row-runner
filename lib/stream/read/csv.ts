@@ -47,7 +47,6 @@ export const csv = (path: string, options: Partial<CsvOptions> = {}, done?: Done
         const [s, ns] = process.hrtime(start)
         const ms = s * 1e3 + Math.round(ns / 1e6)
         const data = { ms, rows: row.index + 1 }
-        rs.emit("done", data)
         done?.(data)
     })
 

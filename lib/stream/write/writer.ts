@@ -15,10 +15,8 @@ export class Writer extends Writable {
             objectMode: true,
             write: async (row: Row, _, next) => {
                 if (row.index === 0) {
-                    this.emit("header", row.header)
                     stream?.write(row.header.columns + EOL)
                 }
-                this.emit("row", row)
                 const value = (await transform?.(row)) ?? row
                 stream?.write(value)
                 next()
@@ -29,7 +27,6 @@ export class Writer extends Writable {
             stream?.close?.()
             const [s, ns] = process.hrtime(start)
             const ms = s * 1e3 + Math.round(ns / 1e6)
-            this.emit("done", { ms, rows })
             done?.({ ms, rows })
         })
     }
