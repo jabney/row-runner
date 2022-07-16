@@ -5,7 +5,7 @@ import { SearchResult, SearchSpec } from "../../types"
 
 export type SearchFn = (row: Row, result: SearchResult[]) => void
 
-export const search = (specs: SearchSpec | SearchSpec[], cb: SearchFn) => {
+export const search = (specs: SearchSpec | SearchSpec[], cb?: SearchFn) => {
     let index = 0
     return new Stream.Transform({
         objectMode: true,
