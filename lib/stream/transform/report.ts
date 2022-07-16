@@ -3,9 +3,9 @@ import { EOL } from "os"
 import { Stream } from "stream"
 import { Row } from "../../row"
 
-export type ReportFn = (meta: any) => string[][]
+export type ReportFn<T> = (meta: T) => string[][]
 
-export const report = (path: string, handler: ReportFn) => {
+export const report = <T = any>(path: string, handler: ReportFn<T>) => {
     let cachedRow: Row
     const stream = new Stream.Transform({
         objectMode: true,
@@ -15,11 +15,9 @@ export const report = (path: string, handler: ReportFn) => {
         },
     }).on("close", () => {
         const writeStream = createWriteStream(path)
-        if (cachedRow != null) {
-            const meta = Object.fromEntries(cachedRow == null ? [] : [...cachedRow.meta.entries()])
-            const rows = handler(meta)
-            rows.forEach((row) => writeStream.write(row.join(",") + EOL))
-        }
+        const meta = Object.fromEntries(cachedRow?.meta.entries() ?? []) as T
+        const rows = handler(meta)
+        rows.forEach((row) => writeStream.write(row.join(",") + EOL))
         writeStream.close()
     })
     return stream

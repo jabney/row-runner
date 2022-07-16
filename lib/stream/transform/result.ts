@@ -12,12 +12,8 @@ export const result = <T = any>(handler: ResultFn<T>) => {
             next(null, row)
         },
     }).on("close", () => {
-        if (cachedRow) {
-            const meta = Object.fromEntries(cachedRow == null ? [] : [...cachedRow.meta.entries()])
-            handler(meta as T)
-        } else {
-            handler({} as T)
-        }
+        const meta = Object.fromEntries(cachedRow?.meta.entries() ?? []) as T
+        handler(meta)
     })
     return stream
 }
