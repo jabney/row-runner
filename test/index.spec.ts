@@ -275,3 +275,67 @@ tap.test("Processes no-header CSV", (t) => {
         )
         .pipe(run(() => t.end()))
 })
+
+tap.test("Selects columns from a row", (t) => {
+    csv(realEstatePath, { hasHeader: true })
+        .pipe(filter((row) => row.index === 0))
+        .pipe(
+            audit((row) => {
+                const [beds, baths] = row.select(["beds", "baths"])
+                t.same(beds, 2)
+                t.same(baths, 1)
+            })
+        )
+        .pipe(run(() => t.end()))
+})
+
+tap.test("Converts rows to json", (t) => {
+    csv(realEstatePath, { hasHeader: true })
+        .pipe(filter((row) => row.index === 0))
+        .pipe(select(["beds", "baths"]))
+        .pipe(
+            audit((row) => {
+                const json = JSON.stringify(row)
+                t.equal(json, `"{\\"beds\\":\\"2\\",\\"baths\\":\\"1\\"}"`)
+            })
+        )
+        .pipe(run(() => t.end()))
+})
+
+tap.test("Converts types pickup", (t) => {
+    csv(realEstatePath, { hasHeader: true })
+        .pipe(
+            describe([
+                { cols: "beds", type: "parse-int" },
+                { cols: "price", type: "parse-float" },
+                { cols: "extra1", type: "boolean" },
+                { cols: "extra2", type: "nullable" },
+                { cols: "extra3", type: "json" },
+            ])
+        )
+        .pipe(filter((row) => row.index === 0))
+        .pipe(select(["beds", "baths", "price", "extra1", "extra2", "extra3"]))
+        .pipe(
+            audit((row) => {
+                const obj = row.asObject()
+                t.type(obj.beds, "number")
+                t.type(obj.price, "number")
+                t.equal(obj.extra1, true)
+                t.equal(obj.extra2, null)
+                t.equal(obj.extra3, null)
+            })
+        )
+        .pipe(run(() => t.end()))
+})
+
+tap.test("Header.selectIndices returns -1 for unknown column type", (t) => {
+    csv(realEstatePath, { hasHeader: true })
+        .pipe(filter((row) => row.index === 0))
+        .pipe(
+            audit((row) => {
+                const [index] = row.header.selectIndices(new Date() as any)
+                t.equal(index, -1)
+            })
+        )
+        .pipe(run(() => t.end()))
+})
