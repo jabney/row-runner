@@ -206,16 +206,27 @@ tap.test("Converts row to object", (t) => {
     csv(realEstatePath, { hasHeader: true })
         .pipe(
             describe([
-                { cols: ["beds", "baths", "sq_ft", "price", "latitude", "longitude"], type: "number" },
+                { cols: ["beds", "baths", "sq_ft", "price"], type: "number" },
+                { cols: ["latitude", "longitude"], type: "json" },
                 { cols: "sale_date", type: "date" },
             ])
         )
         .pipe(filter((row) => row.index < 3))
         .pipe(
             audit((row) => {
-                const obj1 = row.asObject()
-                const obj2 = row.asObject(/beds|baths/)
-                // console.log(obj1, obj2)
+                const full = row.asObject()
+                t.type(full.beds, "number")
+                t.type(full.baths, "number")
+                t.type(full.sq_ft, "number")
+                t.type(full.price, "number")
+                t.type(full.latitude, "number")
+                t.type(full.longitude, "number")
+                t.ok(full.sale_date instanceof Date)
+
+                const partial = row.asObject(/beds|baths|sale_date/)
+                t.type(partial.beds, "number")
+                t.type(partial.baths, "number")
+                t.ok(partial.sale_date instanceof Date)
             })
         )
         .pipe(run(() => t.end()))
