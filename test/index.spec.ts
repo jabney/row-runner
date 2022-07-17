@@ -24,7 +24,7 @@ import { print } from "../lib/stream/write/print"
 import { run } from "../lib/stream/write/run"
 import { write } from "../lib/stream/write/write"
 
-import { pipeline } from "stream"
+import { pipeline, Stream } from "stream"
 
 const realEstatePath = "./test/data/real-estate.csv"
 const crimeReportsPath = "./test/data/crime-reports.csv"
@@ -409,4 +409,29 @@ tap.test("Wites csv", async (t) => {
             resolve
         )
     })
+})
+
+tap.test("Prints output", (t) => {
+    pipeline(
+        csv(realEstatePath, { hasHeader: true }),
+        filter((row) => row.index < 3),
+        select(/beds|baths|sq_ft|price/i),
+        describe({ cols: /beds|baths|sq_ft|price/i, type: "number" }),
+        print(
+            null,
+            new Stream.Writable({
+                write: (chunk, _, next) => {
+                    const { beds, baths, sq_ft, price } = JSON.parse(chunk.toString())
+                    t.type(beds, "number")
+                    t.type(baths, "number")
+                    t.type(sq_ft, "number")
+                    t.type(price, "number")
+                    next()
+                },
+            })
+        ),
+        () => {
+            t.end()
+        }
+    )
 })
