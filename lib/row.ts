@@ -24,7 +24,7 @@ export class Row {
         return typeof column === "number" ? this.values[column] : this.values[this.header.getIndex(column)]
     }
 
-    getTyped = <T = unknown>(column: string | number): T => {
+    getTyped = <T = any>(column: string | number): T => {
         return this.convertType(
             column,
             typeof column === "number" ? this.values[column] : this.values[this.header.getIndex(column)]
