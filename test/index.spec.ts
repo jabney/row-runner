@@ -2,28 +2,28 @@ import tap from "tap"
 import { createInterface } from "readline"
 import { createReadStream } from "fs"
 import { mkdir, rm } from "fs/promises"
-import {
-    aggregate,
-    append,
-    audit,
-    constant,
-    csv,
-    describe,
-    each,
-    exclude,
-    filter,
-    map,
-    order,
-    rename,
-    report,
-    result,
-    run,
-    sample,
-    search,
-    select,
-    store,
-    write,
-} from ".."
+import { csv } from "../lib/stream/read/csv"
+import { aggregate } from "../lib/stream/transform/aggregate"
+import { append } from "../lib/stream/transform/append"
+import { audit } from "../lib/stream/transform/audit"
+import { constant } from "../lib/stream/transform/constant"
+import { describe } from "../lib/stream/transform/describe"
+import { exclude } from "../lib/stream/transform/exclude"
+import { filter } from "../lib/stream/transform/filter"
+import { map } from "../lib/stream/transform/map"
+import { order } from "../lib/stream/transform/order"
+import { rename } from "../lib/stream/transform/rename"
+import { report } from "../lib/stream/transform/report"
+import { result } from "../lib/stream/transform/result"
+import { sample } from "../lib/stream/transform/sample"
+import { search } from "../lib/stream/transform/search"
+import { select } from "../lib/stream/transform/select"
+import { store } from "../lib/stream/transform/store"
+import { each } from "../lib/stream/write/each"
+import { print } from "../lib/stream/write/print"
+import { run } from "../lib/stream/write/run"
+import { write } from "../lib/stream/write/write"
+
 import { pipeline } from "stream"
 
 const realEstatePath = "./test/data/real-estate.csv"
