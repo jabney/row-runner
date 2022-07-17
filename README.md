@@ -2,6 +2,22 @@
 
 Process CSV files as streams of rows.
 
-## In Development
+Declarative. Opinionated.
 
-- Still working things out.
+## Experimental
+
+### v0.1.x
+
+- The interface is mostly stable.
+- Decent amount of test coverage.
+
+    File      | % Stmts | % Branch | % Funcs | % Lines
+    ----------|---------|----------|---------|---------
+    All files | 100     | 86.66    | 100     | 100
+
+### >= v0.2.x
+
+- Things could change.
+
+## Usage
+
