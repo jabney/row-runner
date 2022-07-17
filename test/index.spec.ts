@@ -1,3 +1,4 @@
+import { pipeline, Stream } from "stream"
 import tap from "tap"
 import { createInterface } from "readline"
 import { createReadStream } from "fs"
@@ -23,8 +24,6 @@ import { each } from "../lib/stream/write/each"
 import { print } from "../lib/stream/write/print"
 import { run } from "../lib/stream/write/run"
 import { write } from "../lib/stream/write/write"
-
-import { pipeline, Stream } from "stream"
 
 const realEstatePath = "./test/data/real-estate.csv"
 const crimeReportsPath = "./test/data/crime-reports.csv"
@@ -430,8 +429,6 @@ tap.test("Prints output", (t) => {
                 },
             })
         ),
-        () => {
-            t.end()
-        }
+        () => t.end()
     )
 })
