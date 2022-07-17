@@ -1,7 +1,7 @@
 import tap from "tap"
 import { createInterface } from "readline"
 import { createReadStream } from "fs"
-import { mkdir, readdir, rm } from "fs/promises"
+import { mkdir, rm } from "fs/promises"
 import {
     aggregate,
     append,
@@ -22,6 +22,7 @@ import {
     search,
     select,
     store,
+    write,
 } from ".."
 import { pipeline } from "stream"
 
@@ -374,6 +375,37 @@ tap.test("Wites aggregation report", async (t) => {
                 t.same(count, 25)
                 t.ok(+total > 2e6)
             }),
+            run(),
+            resolve
+        )
+    })
+})
+
+tap.test("Wites csv", async (t) => {
+    const writeFilePath = "temp/write.csv"
+    await makeTempDir
+    await rm(writeFilePath, { force: true })
+
+    await new Promise((resolve) => {
+        pipeline(
+            csv(realEstatePath, { hasHeader: true }),
+            filter((row) => row.index < 5),
+            select(/beds|baths|sq_ft|price/i),
+            write(writeFilePath),
+            resolve
+        )
+    })
+
+    await new Promise((resolve) => {
+        pipeline(
+            csv(writeFilePath, { hasHeader: true }),
+            aggregate("count", 0, (_, count) => count + 1),
+            aggregate("total", 0, (row, total) => total + Number(row.get("price"))),
+            result<{ count: number; total: number }>(({ count, total }) => {
+                t.same(count, 5)
+                t.ok(+total > 3e5)
+            }),
+            run(),
             resolve
         )
     })
