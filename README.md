@@ -13,7 +13,7 @@ Declarative. Opinionated.
 
     File      | % Stmts | % Branch | % Funcs | % Lines
     ----------|---------|----------|---------|---------
-    All files | 100     | 86.66    | 100     | 100
+    All files | 100     | 85.71    | 100     | 100
 
 ### >= v0.2.x
 
