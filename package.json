@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run clean && tsc",
-    "cover": "npm run clean && tap --ts --coverage-report=html",
+    "cover": "npm run clean && tap --ts --no-check-coverage --coverage-report=html",
     "clean": "rm -rf dist",
     "prepare": "npm run test-ts && npm run build",
     "test": "npm run build && tap --ts --no-coverage",
