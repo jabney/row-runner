@@ -1,6 +1,7 @@
 import tap from "tap"
 import { createInterface } from "readline"
 import { createReadStream } from "fs"
+import { mkdir, readdir, rm } from "fs/promises"
 import {
     aggregate,
     append,
@@ -14,6 +15,7 @@ import {
     map,
     order,
     rename,
+    report,
     result,
     run,
     sample,
@@ -21,6 +23,7 @@ import {
     select,
     store,
 } from ".."
+import { pipeline } from "stream"
 
 const realEstatePath = "./test/data/real-estate.csv"
 const crimeReportsPath = "./test/data/crime-reports.csv"
@@ -32,6 +35,8 @@ const realEstateLineCount = new Promise<number>((resolve) => {
     rl.on("line", () => (count += 1))
     rl.on("close", () => resolve(count - 1))
 })
+
+const makeTempDir = mkdir("temp").catch(() => {})
 
 tap.test("Reports processed row count", async (t) => {
     const lines = await realEstateLineCount
@@ -338,4 +343,38 @@ tap.test("Header.selectIndices returns -1 for unknown column type", (t) => {
             })
         )
         .pipe(run(() => t.end()))
+})
+
+tap.test("Wites aggregation report", async (t) => {
+    const reportFilePath = "temp/real-estate-report.csv"
+    await makeTempDir
+    await rm(reportFilePath, { force: true })
+
+    await new Promise((resolve) => {
+        pipeline(
+            csv(realEstatePath, { hasHeader: true }),
+            describe({ cols: "price", type: "number" }),
+            filter((row) => row.index < 25),
+            aggregate("count", 0, (_, count) => count + 1),
+            aggregate("total", 0, (row, total) => total + row.getTyped<number>("price")),
+            report<{ count: number; total: number }>(reportFilePath, ({ count, total }) => [
+                ["count", "total"],
+                [count, total],
+            ]),
+            run(),
+            resolve
+        )
+    })
+
+    await new Promise((resolve) => {
+        pipeline(
+            csv(reportFilePath, { hasHeader: true }),
+            audit((row) => {
+                const [count, total] = row.select(["count", "total"])
+                t.same(count, 25)
+                t.ok(+total > 2e6)
+            }),
+            resolve
+        )
+    })
 })
