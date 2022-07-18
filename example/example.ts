@@ -45,13 +45,11 @@ import { describe } from "../lib/stream/transform/describe"
 
     csv("real-estate.csv", { hasHeader: true })
         .pipe(select(["beds", "baths", "sq_ft", "price"]))
-        .pipe(filter((row) => +row.get("sq_ft") > 1000))
         .pipe(write("example1b.csv"))
 
     await new Promise((resolve) => {
         csv("real-estate.csv", { hasHeader: true })
             .pipe(select(["beds", "baths", "sq_ft", "price"]))
-            .pipe(filter((row) => +row.get("sq_ft") > 1000))
             .pipe(write("example1c.csv", resolve))
     })
 

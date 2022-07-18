@@ -61,9 +61,8 @@ csv("real-estate.csv", { hasHeader: true })
 await new Promise((resolve) => {
   csv("real-estate.csv", { hasHeader: true })
     .pipe(select(["beds", "baths", "sq_ft", "price"]))
-    .pipe(write("example1c.csv"))
+    .pipe(write("example1c.csv"), resolve)
 })
-
 ```
 
 #### Output (CSV)
