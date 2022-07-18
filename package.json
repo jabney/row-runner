@@ -13,6 +13,13 @@
   },
   "author": "James Abney",
   "license": "ISC",
+  "keywords": [
+    "csv",
+    "stream",
+    "etl",
+    "row",
+    "json"
+  ],
   "devDependencies": {
     "@types/node": "^18.0.3",
     "@types/tap": "^15.0.7",

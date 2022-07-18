@@ -27,7 +27,7 @@ npm install row-runner
 
 ## Usage (Getting Started)
 
-### Source CSV
+### Sample Data (CSV)
 
     ┌──────────────────┬─────────┬───────┬──────┬───────┬────────┬─────────┐
     │       city       │   zip   │ state │ beds │ baths │ sq_ft  │  price  │
@@ -49,8 +49,7 @@ import { csv, select, write } from "row-runner"
 pipeline(
   csv("real-estate.csv", { hasHeader: true }), // read
   select(["beds", "baths", "sq_ft", "price"]), // transform
-  write("example1a.csv"),                       // write
-  () => console.table(table)
+  write("example1a.csv")                        // write
 )
 
 // With chained pipes
@@ -108,9 +107,9 @@ import { csv, aggregate, report, run } from "row-runner"
 
 pipeline(
   csv("real-estate.csv", { hasHeader: true }),
-  des
+  describe([{ cols: "price", type: "number" }]),
   aggregate("count", 0, (_, count) => count + 1),
-  aggregate("total", 0, (row, total) => total + Number(row.get("price"))),
+  aggregate("total", 0, (row, total) => total + row.getTyped<number>("price")),
   report("example3.csv", ({ count, total }) => [
       ["count", "total"],
       [count, `$${total.toLocaleString()}`],

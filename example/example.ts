@@ -98,7 +98,7 @@ import { describe } from "../lib/stream/transform/describe"
         csv("real-estate.csv", { hasHeader: true }),
         describe([{ cols: "price", type: "number" }]),
         aggregate("count", 0, (_, count) => count + 1),
-        aggregate("total", 0, (row, total) => total + Number(row.get("price"))),
+        aggregate("total", 0, (row, total) => total + row.getTyped<number>("price")),
         result<{ count: number; total: number }>(({ count, total }) => {
             console.table([{ count, total: `$${total.toLocaleString()}` }])
         }),
