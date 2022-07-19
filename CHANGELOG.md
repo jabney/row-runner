@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2022-07-18
+### Changes
+- Type fix for `TypeDescriptor`
+
 ## [0.1.3] - 2022-07-17
 ### Changes
 - Readme fix
