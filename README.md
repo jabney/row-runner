@@ -102,7 +102,7 @@ csv("real-estate.csv", { hasHeader: true })
 
 ```ts
 import { pipeline } from "stream"
-import { csv, aggregate, report, run } from "row-runner"
+import { csv, describe, aggregate, report, run } from "row-runner"
 
 pipeline(
   csv("real-estate.csv", { hasHeader: true }),
