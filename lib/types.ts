@@ -30,7 +30,7 @@ export type DataType =
     | "json"
     | ((value: string) => any)
 
-export type TypeDescriptor = [col: ColumnSpec | ColumnSpec[], type: DataType]
+export type TypeDescriptor = { cols: ColumnSpec | ColumnSpec[]; type: DataType }
 
 export type TypesMap = Map<string, DataType>
 

@@ -1,10 +1,8 @@
 import { Stream } from "stream"
 import { Row } from "../../row"
-import { ColumnSpec, DataType } from "../../types"
+import { TypeDescriptor } from "../../types"
 
-export type DescribeItem = { cols: ColumnSpec | ColumnSpec[]; type: DataType }
-
-export const describe = (desc: DescribeItem | DescribeItem[]) => {
+export const describe = (desc: TypeDescriptor | TypeDescriptor[]) => {
     return new Stream.Transform({
         objectMode: true,
         transform: (row: Row, _, next) => {
