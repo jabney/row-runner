@@ -13,6 +13,10 @@
   },
   "author": "James Abney",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jabney/row-runner.git"
+  },
   "keywords": [
     "csv",
     "stream",
@@ -20,6 +24,10 @@
     "row",
     "json"
   ],
+  "bugs": {
+    "url": "https://github.com/jabney/row-runner/issues"
+  },
+  "homepage": "https://github.com/jabney/row-runner#readme",
   "devDependencies": {
     "@types/node": "^18.0.3",
     "@types/tap": "^15.0.7",
