@@ -1,6 +1,6 @@
 {
   "name": "row-runner",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Process csv files as streams of rows",
   "main": "dist/index.js",
   "scripts": {
