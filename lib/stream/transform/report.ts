@@ -4,7 +4,7 @@ import { Stream } from "stream"
 import { Row } from "../../row"
 import { Stringable } from "../../types"
 
-export type ReportFn<T> = (meta: T) => Stringable[][]
+export type ReportFn<T> = (meta: T) => readonly Stringable[][]
 
 export const report = <T = any>(path: string, handler: ReportFn<T>) => {
     let cachedRow: Row
